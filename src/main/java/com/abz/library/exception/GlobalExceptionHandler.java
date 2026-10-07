@@ -2,6 +2,9 @@ package com.abz.library.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 // import org.springframework.web.context.request.ServletWebRequest;
@@ -44,16 +47,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         return build(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
-    @ExceptionHandler (ForbiddenException.class)
-    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenException ex, HttpServletRequest request){
-        return build(HttpStatus.FORBIDDEN, ex.getMessage(), request);
+    @ExceptionHandler (AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccssDenied(AccessDeniedException ex, HttpServletRequest request){
+        return build(HttpStatus.FORBIDDEN, "Access Denied: " + ex.getMessage(), request);
     }
 
-    @ExceptionHandler (UnauthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException ex, HttpServletRequest request){
-        return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
+    @ExceptionHandler (AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException ex, HttpServletRequest request){
+        String msg = ex instanceof BadCredentialsException ? "Invalid Email or Password." : "Authentication Failed.";  
+        return build(HttpStatus.UNAUTHORIZED, msg, request);
     }
-    
+
     // private static String path(WebRequest request){
     //     return request instanceof ServletWebRequest req ? req.getRequest().getRequestURI(): ""; 
     // }
