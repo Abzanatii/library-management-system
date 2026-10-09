@@ -7,8 +7,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-// import org.springframework.web.context.request.ServletWebRequest;
-// import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,9 +55,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         String msg = ex instanceof BadCredentialsException ? "Invalid Email or Password." : "Authentication Failed.";  
         return build(HttpStatus.UNAUTHORIZED, msg, request);
     }
-
-    // private static String path(WebRequest request){
-    //     return request instanceof ServletWebRequest req ? req.getRequest().getRequestURI(): ""; 
-    // }
-
 }
