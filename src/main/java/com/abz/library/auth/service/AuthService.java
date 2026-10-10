@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.abz.library.auth.dto.AuthResponse;
 import com.abz.library.auth.dto.LoginRequest;
@@ -33,6 +34,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    @Transactional 
     public UserResponse register(RegisterRequest req){
         String email = normalizeEmail(req.email());
         if (userRepository.existsByEmail(email)) {
@@ -69,6 +71,6 @@ public class AuthService {
     }
     
     private static String toNull(String value){
-        return value == null || value.isBlank() ? null : value.trim();
+        return value == null || value.isBlank() ? null : value;
     }
 }
