@@ -1,5 +1,6 @@
 package com.abz.library.collection.mapper;
 
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -10,7 +11,8 @@ import com.abz.library.collection.dto.BookResponse;
 import com.abz.library.collection.entity.Book;
 
 @Mapper(componentModel = "Spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        uses = {DepartmentMapper.class, AuthorMapper.class, CategoryMapper.class})
+        uses = {DepartmentMapper.class, AuthorMapper.class, CategoryMapper.class},
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface BookMapper {
 
     @Mapping (target = "isbn", ignore = true)
