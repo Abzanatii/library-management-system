@@ -49,7 +49,8 @@ public class BookCopy {
 
     @Enumerated (EnumType.STRING)
     @Column (nullable = false)
-    private CopyStatus status;
+    @Builder.Default
+    private CopyStatus status = CopyStatus.AVAILABLE;
 
     @Version 
     private Long version;
