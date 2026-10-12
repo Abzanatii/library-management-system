@@ -54,7 +54,7 @@ public class Book {
     private Integer publicationYear;
 
     @Column 
-    private String Language;
+    private String language;
 
     @ManyToOne (fetch = FetchType.LAZY, optional = false)
     @JoinColumn (name = "department_id", nullable = false)
@@ -96,7 +96,7 @@ public class Book {
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((publisher == null) ? 0 : publisher.hashCode());
         result = prime * result + ((publicationYear == null) ? 0 : publicationYear.hashCode());
-        result = prime * result + ((Language == null) ? 0 : Language.hashCode());
+        result = prime * result + ((language == null) ? 0 : language.hashCode());
         result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
         result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
         return result;
@@ -141,10 +141,10 @@ public class Book {
                 return false;
         } else if (!publicationYear.equals(other.publicationYear))
             return false;
-        if (Language == null) {
-            if (other.Language != null)
+        if (language == null) {
+            if (other.language != null)
                 return false;
-        } else if (!Language.equals(other.Language))
+        } else if (!language.equals(other.language))
             return false;
         if (createdAt == null) {
             if (other.createdAt != null)
