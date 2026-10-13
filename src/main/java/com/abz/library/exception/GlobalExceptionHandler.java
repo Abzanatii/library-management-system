@@ -37,7 +37,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 
     @ExceptionHandler (Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex, HttpServletRequest request){
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "An expected error occurred.", request);
+        log.error("Unhandled exception: {} {}" + request.getMethod(), request.getRequestURI(), ex);
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.", request);
     }
     
     @ExceptionHandler (ResourceNotFoundException.class)
