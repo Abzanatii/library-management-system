@@ -36,6 +36,7 @@ public class SecurityConfig {
             .requestMatchers("/api/admin/**").hasRole("ADMIN")
             .requestMatchers("/api/librarian/**").hasAnyRole("ADMIN", "LIBRARIAN")
             .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
+            .requestMatchers("/api/books/**").permitAll()
             .anyRequest().authenticated())
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
