@@ -110,7 +110,7 @@ public class BookService {
     @Transactional (readOnly = true)
     public BookResponse findById(Long id){
         return  bookMapper.toResponse(
-                bookRepository.findById(id)
+                bookRepository.findWithDetailsById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", id)));
     }
 
@@ -148,7 +148,11 @@ public class BookService {
             : bookRepository.findWithDetailsByIdIn(ids).stream().collect(Collectors.toMap(Book::getId, Function.identity()));
 
         List<BookResponse> content = ids.stream().map(withDetails::get).map(bookMapper::toResponse).toList();
-        return new PageResponse<>(content, page.getNumber(), page.getSize(), page.getTotalElements(), page.getTotalPages());
+        return new PageResponse<>(content, 
+                        page.getNumber(), 
+                        page.getSize(), 
+                        page.getTotalElements(), 
+                        page.getTotalPages());
     }
 
     private Pageable safeSort(Pageable pageable){

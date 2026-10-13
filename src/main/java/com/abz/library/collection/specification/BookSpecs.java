@@ -10,9 +10,7 @@ import com.abz.library.collection.entity.CopyStatus;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor 
 public final class BookSpecs {
 
     public static Specification<Book> from(BookSearchCriteria criteria){
