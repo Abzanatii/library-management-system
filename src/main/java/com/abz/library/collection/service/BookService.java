@@ -2,16 +2,23 @@ package com.abz.library.collection.service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.abz.library.collection.dto.BookRequest;
 import com.abz.library.collection.dto.BookResponse;
+import com.abz.library.collection.dto.BookSearchCriteria;
+import com.abz.library.collection.dto.PageResponse;
 import com.abz.library.collection.entity.Author;
 import com.abz.library.collection.entity.Book;
 import com.abz.library.collection.entity.Category;
@@ -22,6 +29,7 @@ import com.abz.library.collection.repository.BookCopyRepository;
 import com.abz.library.collection.repository.BookRepository;
 import com.abz.library.collection.repository.CategoryRepository;
 import com.abz.library.collection.repository.DepartmentRepository;
+import com.abz.library.collection.specification.BookSpecs;
 import com.abz.library.exception.BusinessRuleException;
 import com.abz.library.exception.ConflictException;
 import com.abz.library.exception.ResourceNotFoundException;
@@ -40,6 +48,9 @@ public class BookService {
     private final DepartmentRepository departmentRepository;
     private final BookCopyRepository bookCopyRepository;
 
+    private static final Set<String> SORTABLE =
+        Set.of("isbn", "title", "language", "publicationYear", "createdAt", "updatedAt");
+    
     @Transactional 
     public BookResponse create(BookRequest request){
 
@@ -126,5 +137,30 @@ public class BookService {
                 throw new ResourceNotFoundException(resource + " ID(s) not found: " + missing);
             }
             return new HashSet<>(found);
+    }
+
+    @Transactional (readOnly = true)
+    public PageResponse<BookResponse> search(BookSearchCriteria criteria, Pageable pageable){
+        Page<Book> page = bookRepository.findAll(BookSpecs.from(criteria), safeSort(pageable));
+    
+        List<Long> ids = page.getContent().stream().map(Book::getId).toList();
+        Map<Long, Book> withDetails = ids.isEmpty() ? Map.of() 
+            : bookRepository.findWithDetailsByIdIn(ids).stream().collect(Collectors.toMap(Book::getId, Function.identity()));
+
+        List<BookResponse> content = ids.stream().map(withDetails::get).map(bookMapper::toResponse).toList();
+        return new PageResponse<>(content, page.getNumber(), page.getSize(), page.getTotalElements(), page.getTotalPages());
+    }
+
+    private Pageable safeSort(Pageable pageable){
+        Sort sort = pageable.getSort();
+        for (Sort.Order order: sort){
+            if (!SORTABLE.contains(order.getProperty())) {
+                throw new BusinessRuleException("Sorting by: '" + order.getProperty() + "' is not allowed");
+            }
+        }
+        if (sort.isUnsorted()) {
+            sort = Sort.by(Book::getTitle);
+        }
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort.and(Sort.by(Book::getId)));
     }
 }
