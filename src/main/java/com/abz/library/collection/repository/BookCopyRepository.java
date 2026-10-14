@@ -3,6 +3,7 @@ package com.abz.library.collection.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.abz.library.collection.entity.BookCopy;
@@ -16,8 +17,10 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long>{
 
     boolean existsByBookIdAndCopyNumberAndIdNot(Long bookId, String copyNumber, Long id);
 
+    @EntityGraph (attributePaths = "book")
     Optional<BookCopy> findWithBookById(Long id);
 
+    @EntityGraph (attributePaths = "book")
     List<BookCopy> findByBookIdOrderByCopyNumberAsc(Long bookId);
 
     Optional<BookCopy> findFirstByBookIdAndStatusOrderByCopyNumberAsc(Long bookId, CopyStatus status);
