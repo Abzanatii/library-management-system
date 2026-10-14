@@ -95,6 +95,7 @@ public class BookCopyService {
                 "' change to '" + next + "' is not allowed");
         }
         copy.setStatus(next);
+        bookCopyRepository.saveAndFlush(copy);
     }
 
     private static String normalizaCopy(String rawCopy){
