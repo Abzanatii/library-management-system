@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.abz.library.collection.entity.BookCopy;
+import com.abz.library.collection.entity.CopyStatus;
 
 public interface BookCopyRepository extends JpaRepository<BookCopy, Long>{
 
@@ -18,4 +19,6 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long>{
     Optional<BookCopy> findWithBookById(Long id);
 
     List<BookCopy> findByBookIdOrderByCopyNumberAsc(Long bookId);
+
+    Optional<BookCopy> findFirstByBookIdAndStatusOrderByCopyNumberAsc(Long bookId, CopyStatus status);
 }

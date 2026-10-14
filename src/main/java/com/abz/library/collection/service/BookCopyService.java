@@ -54,7 +54,7 @@ public class BookCopyService {
         }
 
         copy.setCopyNumber(CopyNumber);
-        changeStatus(copy, request.status());
+        staffChangeTo(copy, request.status());
         return bookCopyMapper.toResponse(bookCopyRepository.saveAndFlush(copy));
     }
 
@@ -74,7 +74,7 @@ public class BookCopyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Book-Copy", id)));
     }
 
-    private void changeStatus(BookCopy bookCopy, CopyStatus next){
+    private void staffChangeTo(BookCopy bookCopy, CopyStatus next){
         CopyStatus current = bookCopy.getStatus();
         if (current == next) {
             return;
@@ -86,6 +86,15 @@ public class BookCopyService {
             throw new BusinessRuleException("Status '" + current + "' change to '" + next + "' is not allowed");
         }
         bookCopy.setStatus(next);
+    }
+
+    @Transactional 
+    public void changeTo(BookCopy copy, CopyStatus next){
+        if (!copy.getStatus().changeTo(next)) {
+            throw new BusinessRuleException("Status '" + copy.getStatus() + 
+                "' change to '" + next + "' is not allowed");
+        }
+        copy.setStatus(next);
     }
 
     private static String normalizaCopy(String rawCopy){
