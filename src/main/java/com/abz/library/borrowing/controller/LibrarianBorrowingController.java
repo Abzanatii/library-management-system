@@ -1,9 +1,11 @@
 package com.abz.library.borrowing.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,5 +27,17 @@ public class LibrarianBorrowingController {
     @ResponseStatus (HttpStatus.CREATED)
     public BorrowingResponse borrow(@Valid @RequestBody LibrarianBorrowingRequest request){
         return borrowingService.borrow(request.customerId(), request.bookId());
+    }
+
+    @PostMapping ("/borrowing/{id}/return")
+    public BorrowingResponse returnBorrow(
+        @PathVariable Long id,
+        @RequestParam (required = false) boolean damaged){
+            return borrowingService.returnByLibrarian(id, damaged);
+    }
+
+    @PostMapping ("/borrowing/{id}/lost")
+    public BorrowingResponse setLost(@PathVariable Long id){
+        return borrowingService.setLost(id);
     }
 }

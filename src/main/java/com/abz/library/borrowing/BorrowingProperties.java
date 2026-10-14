@@ -17,6 +17,9 @@ public record BorrowingProperties(
     BigDecimal maxFines,
 
     @Positive 
-    int PeriodDays
+    int PeriodDays,
+
+    @Positive 
+    BigDecimal perDayFine
 ) {
 }
