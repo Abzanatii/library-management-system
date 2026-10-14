@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -91,6 +92,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
             }).toList();
         return ResponseEntity.badRequest().body(ErrorResponse.of(400, "Validation failed", 
             request.getRequestURI(), fieldErrors));
+    }
+
+    @ExceptionHandler (OptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticLock(OptimisticLockingFailureException ex, HttpServletRequest request){
+        return build(HttpStatus.CONFLICT, "Record was modified, reload and try again", request);
     }
 
     @Override 
