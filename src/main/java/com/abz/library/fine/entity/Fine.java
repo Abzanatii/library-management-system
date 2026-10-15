@@ -17,7 +17,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,18 +52,12 @@ public class Fine {
     @Column (nullable = false)
     @Builder.Default
     private FineStatus status = FineStatus.UNPAID;
-
+  
     @Column (name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     @Column (name = "paid_at")
     private LocalDateTime paidAt;
-
-    @PrePersist 
-    void onCreate(){
-        if (createAt == null)
-            createAt = LocalDateTime.now();
-    }
 
     @Override
     public int hashCode() {
@@ -73,7 +66,7 @@ public class Fine {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((amount == null) ? 0 : amount.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + ((createAt == null) ? 0 : createAt.hashCode());
+        result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
         result = prime * result + ((paidAt == null) ? 0 : paidAt.hashCode());
         return result;
     }
@@ -99,10 +92,10 @@ public class Fine {
             return false;
         if (status != other.status)
             return false;
-        if (createAt == null) {
-            if (other.createAt != null)
+        if (createdAt == null) {
+            if (other.createdAt != null)
                 return false;
-        } else if (!createAt.equals(other.createAt))
+        } else if (!createdAt.equals(other.createdAt))
             return false;
         if (paidAt == null) {
             if (other.paidAt != null)
