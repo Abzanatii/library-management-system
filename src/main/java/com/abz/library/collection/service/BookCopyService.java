@@ -2,6 +2,7 @@ package com.abz.library.collection.service;
 
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import com.abz.library.collection.dto.BookCopyUpdateRequest;
 import com.abz.library.collection.entity.Book;
 import com.abz.library.collection.entity.BookCopy;
 import com.abz.library.collection.entity.CopyStatus;
+import com.abz.library.collection.event.ReturnedBookCopy;
 import com.abz.library.collection.mapper.BookCopyMapper;
 import com.abz.library.collection.repository.BookCopyRepository;
 import com.abz.library.collection.repository.BookRepository;
@@ -27,6 +29,7 @@ public class BookCopyService {
     private final BookCopyRepository bookCopyRepository;
     private final BookCopyMapper bookCopyMapper;
     private final BookRepository bookRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional 
     public BookCopyResponse create(BookCopyCreateRequest request){
@@ -40,7 +43,10 @@ public class BookCopyService {
         BookCopy copy = bookCopyMapper.toEntity(request);
         copy.setBook(book);
         copy.setCopyNumber(CopyNumber);
-        return bookCopyMapper.toResponse(bookCopyRepository.save(copy));
+        bookCopyRepository.save(copy);
+
+        eventPublisher.publishEvent(copy);
+        return bookCopyMapper.toResponse(copy);
     }
 
     @Transactional 
@@ -74,6 +80,7 @@ public class BookCopyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Book-Copy", id)));
     }
 
+    @Transactional 
     private void staffChangeTo(BookCopy bookCopy, CopyStatus next){
         CopyStatus current = bookCopy.getStatus();
         if (current == next) {
@@ -86,6 +93,7 @@ public class BookCopyService {
             throw new BusinessRuleException("Status '" + current + "' change to '" + next + "' is not allowed");
         }
         bookCopy.setStatus(next);
+        publish(bookCopy, next);
     }
 
     @Transactional 
@@ -96,6 +104,13 @@ public class BookCopyService {
         }
         copy.setStatus(next);
         bookCopyRepository.saveAndFlush(copy);
+        publish(copy, next);
+    }
+
+    private void publish(BookCopy copy, CopyStatus status){
+        if (status == CopyStatus.AVAILABLE) {
+            eventPublisher.publishEvent(new ReturnedBookCopy(copy));
+        }
     }
 
     private static String normalizaCopy(String rawCopy){
