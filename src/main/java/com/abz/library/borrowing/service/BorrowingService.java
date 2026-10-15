@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -34,9 +34,12 @@ import com.abz.library.exception.ResourceNotFoundException;
 import com.abz.library.fine.entity.FineStatus;
 import com.abz.library.fine.repository.FineRepository;
 import com.abz.library.fine.service.FineService;
+import com.abz.library.reservation.Service.ReservationService;
+import com.abz.library.reservation.entity.Reservation;
 import com.abz.library.user.entity.Role;
 import com.abz.library.user.entity.User;
 import com.abz.library.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service 
@@ -53,10 +56,10 @@ public class BorrowingService {
     private final BookCopyRepository bookCopyRepository;
     private final BookCopyService bookCopyService;
     private final FineService fineService;
+    private final ReservationService reservationService;
 
     private final Clock clock;
 
-    private final Set<BorrowingStatus> IS_BORROWED = EnumSet.of(BorrowingStatus.ACTIVE, BorrowingStatus.OVERDUE);
     private final Set<String> SORTABLE = Set.of("status", "borrowedAt", "returnedAt", "dueDate");
 
     @Transactional 
@@ -66,15 +69,20 @@ public class BorrowingService {
         if (!bookRepository.existsById(bookId)) {
             throw new ResourceNotFoundException("Book", bookId);
         }
-        BookCopy copy = bookCopyRepository.findFirstByBookIdAndStatusOrderByCopyNumberAsc(bookId, CopyStatus.AVAILABLE)
-                            .orElseThrow(() -> new BusinessRuleException("No avaiable copies"));
         
         customerIsActive(customer);
         notBorrowed(customerId, bookId);
         belowMaxBorrow(customerId);
         belowMaxUnpaidFines(customerId);
+        
+        Optional<Reservation> readyReservation = reservationService.borrowReadyReservation(customerId, bookId);
+        BookCopy copy = readyReservation.isPresent()
+                        ? readyReservation.get().getBookCopy()
+                        : bookCopyRepository.
+                        findFirstByBookIdAndStatusOrderByCopyNumberAsc(bookId, CopyStatus.AVAILABLE)
+                        .orElseThrow(() -> new BusinessRuleException("No available copies"));
+        
         bookCopyService.changeTo(copy, CopyStatus.BORROWED);
-
         LocalDateTime now = LocalDateTime.now(clock);
         Borrowing borrowing = Borrowing.builder()
             .customer(customer)
@@ -155,7 +163,7 @@ public class BorrowingService {
     }
 
     private void isBorrowed(Borrowing borrowing){
-        if (!IS_BORROWED.contains(borrowing.getStatus())) {
+        if (!BorrowingStatus.IS_BORROWED.contains(borrowing.getStatus())) {
             throw new BusinessRuleException("Borrowing is not active, current status '" + borrowing.getStatus() + "'");
         }
     }
@@ -170,14 +178,16 @@ public class BorrowingService {
 
     @Transactional (readOnly = true)
     private void notBorrowed(Long customerId, Long bookId){
-        if (borrowingRepository.existsByCustomerIdAndBookCopy_Book_IdAndStatusIn(customerId, bookId, IS_BORROWED)) {
+        if (borrowingRepository.existsByCustomerIdAndBookCopy_Book_IdAndStatusIn(
+                                     customerId, bookId, BorrowingStatus.IS_BORROWED)) {
             throw new BusinessRuleException("Customer already has an active/overdue borrowing for this book");
         }
     }
 
     @Transactional (readOnly = true)
     private void belowMaxBorrow(Long customerId){
-        if (borrowingRepository.countByCustomerIdAndStatusIn(customerId, IS_BORROWED) >= borrowingProperties.maxBorrow()) {
+        if (borrowingRepository.countByCustomerIdAndStatusIn(customerId, BorrowingStatus.IS_BORROWED) 
+            >= borrowingProperties.maxBorrow()) {
             throw new BusinessRuleException("Customer is not allowed to borrow over '" + 
                 borrowingProperties.maxBorrow() + "' books");
         }
