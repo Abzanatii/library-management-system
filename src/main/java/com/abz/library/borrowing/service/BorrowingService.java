@@ -37,7 +37,6 @@ import com.abz.library.fine.service.FineService;
 import com.abz.library.user.entity.Role;
 import com.abz.library.user.entity.User;
 import com.abz.library.user.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service 
@@ -116,6 +115,7 @@ public class BorrowingService {
         borrowing.setStatus(BorrowingStatus.RETURNED);
 
         long overdue = ChronoUnit.DAYS.between(borrowing.getDueDate(), now);
+
         if (overdue > borrowingProperties.PeriodDays()) {
             BigDecimal fine = BigDecimal.valueOf(overdue).multiply(borrowingProperties.perDayFine())
                                 .setScale(2, RoundingMode.HALF_UP);
@@ -188,7 +188,7 @@ public class BorrowingService {
         BigDecimal unpaidFines = fineRepository.sumAmountByCustomerIdAndStatus(customerId, FineStatus.UNPAID);
         unpaidFines = (unpaidFines == null) ? BigDecimal.ZERO : unpaidFines;
         if (unpaidFines.compareTo(borrowingProperties.maxFines()) > 0) {
-            throw new BusinessRuleException("Customer above '" + borrowingProperties.maxFines() + " EGP' is not allowed to borrow books.\n Customer has unpaid fines: '" + unpaidFines.toPlainString() + " EGP'");
+            throw new BusinessRuleException("Customer above '" + borrowingProperties.maxFines() + " EGP' is not allowed to borrow books. Customer has unpaid fines: '" + unpaidFines.toPlainString() + " EGP'");
         }
     }
 
