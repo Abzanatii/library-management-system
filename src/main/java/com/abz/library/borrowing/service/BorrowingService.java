@@ -81,7 +81,7 @@ public class BorrowingService {
                         : bookCopyRepository.
                         findFirstByBookIdAndStatusOrderByCopyNumberAsc(bookId, CopyStatus.AVAILABLE)
                         .orElseThrow(() -> new BusinessRuleException("No available copies"));
-        
+
         bookCopyService.changeTo(copy, CopyStatus.BORROWED);
         LocalDateTime now = LocalDateTime.now(clock);
         Borrowing borrowing = Borrowing.builder()
@@ -90,6 +90,7 @@ public class BorrowingService {
             .borrowedAt(now)
             .dueDate(now.plusDays(borrowingProperties.PeriodDays()))
             .build();
+        readyReservation.ifPresent(reservationService::complete);
         return borrowingMapper.toResponse(borrowingRepository.save(borrowing));
     }
 
