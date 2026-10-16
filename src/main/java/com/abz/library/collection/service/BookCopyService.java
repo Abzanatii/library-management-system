@@ -12,7 +12,7 @@ import com.abz.library.collection.dto.BookCopyUpdateRequest;
 import com.abz.library.collection.entity.Book;
 import com.abz.library.collection.entity.BookCopy;
 import com.abz.library.collection.entity.CopyStatus;
-import com.abz.library.collection.event.ReturnedBookCopy;
+import com.abz.library.collection.event.CopyAvailableEvent;
 import com.abz.library.collection.mapper.BookCopyMapper;
 import com.abz.library.collection.repository.BookCopyRepository;
 import com.abz.library.collection.repository.BookRepository;
@@ -45,7 +45,7 @@ public class BookCopyService {
         copy.setCopyNumber(CopyNumber);
         bookCopyRepository.save(copy);
 
-        eventPublisher.publishEvent(copy);
+        eventPublisher.publishEvent(new CopyAvailableEvent(copy));
         return bookCopyMapper.toResponse(copy);
     }
 
@@ -109,7 +109,7 @@ public class BookCopyService {
 
     private void publish(BookCopy copy, CopyStatus status){
         if (status == CopyStatus.AVAILABLE) {
-            eventPublisher.publishEvent(new ReturnedBookCopy(copy));
+            eventPublisher.publishEvent(new CopyAvailableEvent(copy));
         }
     }
 
