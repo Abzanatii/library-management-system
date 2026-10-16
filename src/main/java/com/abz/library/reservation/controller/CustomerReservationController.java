@@ -32,8 +32,8 @@ public class CustomerReservationController {
     @PostMapping ("/books/{id}/reserve")
     public ResponseEntity<ReservationResponse> reserve(
         @AuthenticationPrincipal AuthenticatedUser user,
-        @PathVariable Long bookId){
-            ReservationResponse reservation = reservationService.reserve(user.id(), bookId);
+        @PathVariable Long id){
+            ReservationResponse reservation = reservationService.reserve(user.id(), id);
             URI location =  ServletUriComponentsBuilder.fromCurrentContextPath()
                             .path("/api/customer/reservations/{id}")
                             .buildAndExpand(reservation.id())
