@@ -16,7 +16,7 @@ import com.abz.library.reservation.entity.ReservationStatus;
 public interface ReservationRepository extends JpaRepository<Reservation, Long>{
 
     @EntityGraph (attributePaths = "bookCopy")
-    List<Reservation> findByStatusAndExpiredAtBefore(ReservationStatus status, LocalDateTime time);
+    List<Reservation> findByStatusAndExpiresAtBefore(ReservationStatus status, LocalDateTime time);
 
     boolean existsByCustomerIdAndBookIdAndStatusIn(Long customerId, Long bookId, Collection<ReservationStatus> statuses);
 
