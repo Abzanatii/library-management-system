@@ -26,5 +26,8 @@ public interface FineRepository extends JpaRepository<Fine, Long>{
     Page<Fine> findByCustomerId(Long customerId, Pageable pageable);
     
     @EntityGraph (attributePaths = {"customer", "borrowing", "borrowing.bookCopy", "borrowing.bookCopy.book"})
-    Page<Fine> findByCustomerIdAndStatus(Long customerId, FineStatus status, Pageable pageable);   
+    Page<Fine> findByCustomerIdAndStatus(Long customerId, FineStatus status, Pageable pageable);
+    
+    @Query ("SELECT SUM(f.amount) FROM Fine f WHERE f.status = :status")
+    BigDecimal sumAmountBystatus(@Param ("status") FineStatus status);
 }
