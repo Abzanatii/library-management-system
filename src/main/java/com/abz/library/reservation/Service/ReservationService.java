@@ -15,14 +15,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.abz.library.borrowing.entity.Borrowing;
 import com.abz.library.borrowing.entity.BorrowingStatus;
 import com.abz.library.borrowing.repository.BorrowingRepository;
 import com.abz.library.collection.dto.PageResponse;
 import com.abz.library.collection.entity.Book;
 import com.abz.library.collection.entity.BookCopy;
 import com.abz.library.collection.entity.CopyStatus;
-import com.abz.library.collection.event.ReturnedBookCopy;
+import com.abz.library.collection.event.CopyAvailableEvent;
 import com.abz.library.collection.repository.BookCopyRepository;
 import com.abz.library.collection.repository.BookRepository;
 import com.abz.library.collection.service.BookCopyService;
@@ -89,7 +88,7 @@ public class ReservationService {
 
     @Transactional 
     public ReservationResponse cancel(Long reservationId, Long customerId){
-        Reservation reservation = reservationRepository.findWithDetailsById(customerId)
+        Reservation reservation = reservationRepository.findWithDetailsById(reservationId)
                                     .orElseThrow(() -> new ResourceNotFoundException("Reservation", reservationId));
         
         isExpired();
@@ -129,7 +128,7 @@ public class ReservationService {
 
     @Transactional 
     @EventListener 
-    public void returnedCopyListener(ReturnedBookCopy returnedBook){
+    public void returnedCopyListener(CopyAvailableEvent returnedBook){
         BookCopy copy = returnedBook.copy();
         Long bookId = copy.getBook().getId();
 
@@ -157,7 +156,7 @@ public class ReservationService {
 
     @Transactional 
     public void isExpired(){
-        List<Reservation> expired = reservationRepository.findByStatusAndExpiredAtBefore
+        List<Reservation> expired = reservationRepository.findByStatusAndExpiresAtBefore
                                         (ReservationStatus.READY, LocalDateTime.now(clock));
         if (expired.isEmpty()) {
             return;
@@ -174,11 +173,11 @@ public class ReservationService {
 
     @Transactional
     public  ReservationResponse findByIdAndCustomerId(Long reservationId, Long customerId){
-        Reservation reservation = reservationRepository.findWithDetailsById(customerId)
+        Reservation reservation = reservationRepository.findWithDetailsById(reservationId)
                                     .orElseThrow(() -> new ResourceNotFoundException("Reservation", reservationId));
         
         if (!reservation.getCustomer().getId().equals(customerId)) {
-            throw new AccessDeniedException("Denied permission to modify this item");
+            throw new AccessDeniedException("Denied permission to view this item");
         }
         isExpired();
         return reservationMapper.toCustomerResponse(reservation);
@@ -214,6 +213,6 @@ public class ReservationService {
         if (sort.isUnsorted()) {
             sort = Sort.by(Reservation::getReservedAt);
         }
-        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort.and(Sort.by(Borrowing::getId)));
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort.and(Sort.by(Reservation::getId)));
     }
 }
