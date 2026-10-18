@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,7 +126,7 @@ public class BorrowingService {
 
         long overdue = ChronoUnit.DAYS.between(borrowing.getDueDate(), now);
 
-        if (overdue > borrowingProperties.PeriodDays()) {
+        if (overdue > 0) {
             BigDecimal fine = BigDecimal.valueOf(overdue).multiply(borrowingProperties.perDayFine())
                                 .setScale(2, RoundingMode.HALF_UP);
             fineService.create(borrowing, fine, now);
@@ -161,6 +162,25 @@ public class BorrowingService {
         borrow.setStatus(BorrowingStatus.LOST);
         bookCopyService.changeTo(borrow.getBookCopy(), CopyStatus.LOST);
         return borrowingMapper.toResponse(borrow);
+    }
+
+    @Scheduled (cron = "${borrowing.overdue.cron:0 5 0 * * *}", zone = "${borrowing.overdue.zone:Africa/Cairo}")
+    @Transactional 
+    public void isOverdue(){
+        List<Borrowing> overdue = borrowingRepository.findByStatusAndOverdueDays(
+            BorrowingStatus.ACTIVE, borrowingProperties.PeriodDays());
+        if (overdue.isEmpty()) {
+            return;
+        }
+
+        LocalDateTime now = LocalDateTime.now(clock);
+        for(Borrowing borrowing : overdue){
+            long overdueDays = ChronoUnit.DAYS.between(borrowing.getDueDate(), now);
+            BigDecimal fine = BigDecimal.valueOf(overdueDays).multiply(borrowingProperties.perDayFine())
+                                .setScale(2, RoundingMode.HALF_UP);
+            fineService.create(borrowing, fine, now);
+            borrowing.setFineAmount(fine);
+        }
     }
 
     private void isBorrowed(Borrowing borrowing){

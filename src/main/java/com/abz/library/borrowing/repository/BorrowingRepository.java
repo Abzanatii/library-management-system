@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.abz.library.borrowing.entity.Borrowing;
 import com.abz.library.borrowing.entity.BorrowingStatus;
@@ -44,4 +45,10 @@ public interface BorrowingRepository extends JpaRepository<Borrowing, Long>{
         String getTitle();
         long getCountBorrow();
     }
+
+    @Query ("""
+            SELECT b FROM Borrowing b
+            WHERE b.status = :status
+            AND (CAST(b.dueDate AS date)- CAST(b.borrowedAt AS date)) >= :days""")
+    List<Borrowing> findByStatusAndOverdueDays(@Param ("status")BorrowingStatus status, @Param ("days")int days);
 }
