@@ -49,6 +49,6 @@ public interface BorrowingRepository extends JpaRepository<Borrowing, Long>{
     @Query ("""
             SELECT b FROM Borrowing b
             WHERE b.status = :status
-            AND (CAST(b.dueDate AS date)- CAST(b.borrowedAt AS date)) >= :days""")
+            AND ((CAST(b.dueDate AS date)- CAST(b.borrowedAt AS date)) by day) >= :days""")
     List<Borrowing> findByStatusAndOverdueDays(@Param ("status")BorrowingStatus status, @Param ("days")int days);
 }
