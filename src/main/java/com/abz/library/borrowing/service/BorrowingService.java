@@ -167,13 +167,13 @@ public class BorrowingService {
     @Scheduled (cron = "${borrowing.overdue.cron:0 5 0 * * *}", zone = "${borrowing.overdue.zone:Africa/Cairo}")
     @Transactional 
     public void isOverdue(){
+        LocalDateTime now = LocalDateTime.now(clock);
         List<Borrowing> overdue = borrowingRepository.findByStatusAndOverdueDays(
-            BorrowingStatus.ACTIVE, borrowingProperties.PeriodDays());
+            BorrowingStatus.ACTIVE, borrowingProperties.PeriodDays(), now);
         if (overdue.isEmpty()) {
             return;
         }
 
-        LocalDateTime now = LocalDateTime.now(clock);
         for(Borrowing borrowing : overdue){
             long overdueDays = ChronoUnit.DAYS.between(borrowing.getDueDate(), now);
             BigDecimal fine = BigDecimal.valueOf(overdueDays).multiply(borrowingProperties.perDayFine())
