@@ -61,7 +61,7 @@ com.abz.library
 | Validation | Bean Validation |
 | Testing | JUnit 5, Mockito, AssertJ |
 | API docs | springdoc OpenAPI (Swagger UI) |
-| Other | Lombok |
+| Other | Lombok | MapStruct |
 
 ## How to Run the Project
 
@@ -170,7 +170,7 @@ With the application running:
 
 To call protected endpoints, log in through `POST /api/auth/login`, copy the `accessToken`, click **Authorize**, and paste the token (without the word `Bearer`).
 
-A Postman collection covering every endpoint is in `postman/Library-Management-System.postman_collection.json`.
+A Postman collection covering every endpoint is in `postman/Library-API.postman_collection.json`.
 
 ## Authentication Process
 
@@ -323,7 +323,7 @@ Every error has the same shape:
 
 ## Assumptions
 
-The assignment leaves several points open. These are the decisions made.
+The project requirements leaves several points open. These are the decisions made.
 
 **Users and roles**
 - Staff and customers share one `users` table. Staff accounts come from the development seeding or directly from the database.
