@@ -1,5 +1,6 @@
 package com.abz.library.borrowing.repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +50,6 @@ public interface BorrowingRepository extends JpaRepository<Borrowing, Long>{
     @Query ("""
             SELECT b FROM Borrowing b
             WHERE b.status = :status
-            AND ((CAST(b.dueDate AS date)- CAST(b.borrowedAt AS date)) by day) >= :days""")
-    List<Borrowing> findByStatusAndOverdueDays(@Param ("status")BorrowingStatus status, @Param ("days")int days);
+            AND ((CAST(:NOW AS date)- CAST(b.borrowedAt AS date)) by day) > :days""")
+    List<Borrowing> findByStatusAndOverdueDays(@Param ("status")BorrowingStatus status, @Param ("days")int days, @Param ("NOW") LocalDateTime NOW);
 }

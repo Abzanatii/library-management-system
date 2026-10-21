@@ -20,9 +20,12 @@ import com.abz.library.collection.dto.AuthorRequest;
 import com.abz.library.collection.dto.AuthorResponse;
 import com.abz.library.collection.service.AuthorService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag (name = "Authors (admin)", description = "ADMIN only")
 @RestController 
 @RequiredArgsConstructor 
 @RequestMapping (path = "/api/admin/authors")
@@ -30,6 +33,7 @@ public class AdminAuthorController {
 
     private final AuthorService authorService;
 
+    @Operation (summary = "Create an author")
     @PostMapping
     public ResponseEntity<AuthorResponse> create(@Valid @RequestBody AuthorRequest request){
         AuthorResponse created = authorService.create(request);
@@ -40,21 +44,25 @@ public class AdminAuthorController {
         return ResponseEntity.created(location).body(created);
     }
 
+    @Operation (summary = "List all authors")
     @GetMapping 
     public List<AuthorResponse> findAll(){
         return authorService.findAll();
     }
 
+    @Operation (summary = "List an author")
     @GetMapping ("/{id}")
     public AuthorResponse findById(@PathVariable Long id){
         return authorService.findById(id);
     }
 
+    @Operation (summary = "Update an author")
     @PutMapping ("/{id}")
     public AuthorResponse update(@PathVariable Long id, @Valid @RequestBody AuthorRequest request){
         return authorService.update(id, request);
     }
 
+    @Operation (summary = "Delete an author", description = "Not allowed while the author is linked to a book")
     @DeleteMapping ("/{id}")
     @ResponseStatus (HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){

@@ -20,9 +20,12 @@ import com.abz.library.collection.dto.CategoryRequest;
 import com.abz.library.collection.dto.CategoryResponse;
 import com.abz.library.collection.service.CategoryService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag (name = "Categories (admin)", description = "ADMIN only")
 @RestController 
 @RequiredArgsConstructor 
 @RequestMapping (path = "/api/admin/categories")
@@ -30,6 +33,7 @@ public class AdminCategoryController {
 
     private final CategoryService categoryService;
 
+    @Operation (summary = "Create a category")
     @PostMapping 
     public ResponseEntity<CategoryResponse> create(@Valid @RequestBody CategoryRequest request){
         CategoryResponse created = categoryService.create(request);
@@ -40,22 +44,26 @@ public class AdminCategoryController {
         return ResponseEntity.created(location).body(created);
     }
 
+    @Operation (summary = "Update a category")
     @PutMapping ("/{id}")
     public CategoryResponse update(@Valid @RequestBody CategoryRequest request, @PathVariable Long id){
         return categoryService.update(id, request);
     }
 
+    @Operation (summary = "Delete a category", description = "Not allowed while the category is linked to a book.")
     @DeleteMapping ("/{id}")
     @ResponseStatus (HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){
         categoryService.delete(id);
     }
 
+    @Operation (summary = "List all categories")
     @GetMapping 
     public List<CategoryResponse> findAll(){
         return categoryService.findAll();
     }
 
+    @Operation (summary = "List a category")
     @GetMapping ("/{id}")
     public CategoryResponse findById(@PathVariable Long id){
         return categoryService.findById(id);

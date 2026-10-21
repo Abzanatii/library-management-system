@@ -1,11 +1,14 @@
 package com.abz.library.borrowing.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 public record LibrarianBorrowingRequest(
+    @Schema (description = "The borrowing customer Id", example = "9")
     @NotNull 
     Long customerId,
 
+    @Schema (description = "The Id of the required book to borrow", example = "7")
     @NotNull 
     Long bookId
 ) {

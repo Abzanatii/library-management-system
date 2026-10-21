@@ -20,9 +20,12 @@ import com.abz.library.collection.dto.DepartmentRequest;
 import com.abz.library.collection.dto.DepartmentResponse;
 import com.abz.library.collection.service.DepartmentService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag (name = "Department (Admin)", description = "ADMIN only")
 @RestController 
 @RequiredArgsConstructor 
 @RequestMapping (path = "/api/admin/departments")
@@ -30,16 +33,19 @@ public class AdminDepartmentController {
 
     private final DepartmentService departmentService;
 
+    @Operation (summary = "List all departments")
     @GetMapping 
     public List<DepartmentResponse> findAll(){
         return departmentService.findAll();
     }
 
+    @Operation (summary = "List a department")
     @GetMapping ("/{id}")
     public DepartmentResponse findById(@PathVariable Long id){
         return departmentService.findById(id);
     }
 
+    @Operation (summary = "Create a department")
     @PostMapping 
     public ResponseEntity<DepartmentResponse> create(@Valid @RequestBody DepartmentRequest request){
         DepartmentResponse created = departmentService.create(request);
@@ -50,11 +56,13 @@ public class AdminDepartmentController {
         return ResponseEntity.created(location).body(created);
     }
 
+    @Operation (summary = "Update a department")
     @PutMapping ("/{id}")
     public DepartmentResponse update(@PathVariable Long id, @Valid @RequestBody DepartmentRequest request){
         return departmentService.update(id, request);
     }
 
+    @Operation (summary = "Delete a department", description = "Not allowed while the department still has books.")
     @DeleteMapping ("/{id}")
     @ResponseStatus (HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){

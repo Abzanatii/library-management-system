@@ -18,9 +18,12 @@ import com.abz.library.collection.dto.BookRequest;
 import com.abz.library.collection.dto.BookResponse;
 import com.abz.library.collection.service.BookService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag (name = "Books (admin)", description = "ADMIN only")
 @RestController 
 @RequiredArgsConstructor 
 @RequestMapping (path = "/api/admin/books")
@@ -28,6 +31,7 @@ public class AdminBookController {
 
     private final BookService bookService;
 
+    @Operation (summary = "Create a book")
     @PostMapping 
     public ResponseEntity<BookResponse> create(@Valid @RequestBody BookRequest request){
         BookResponse created = bookService.create(request);
@@ -38,11 +42,13 @@ public class AdminBookController {
         return ResponseEntity.created(location).body(created);
     }
 
+    @Operation (summary = "Update a book")
     @PutMapping ("/{id}")
     public BookResponse update(@Valid @RequestBody BookRequest request, @PathVariable Long id){
         return bookService.update(id, request);
     }
 
+    @Operation (summary = "Delete a book", description = "Not allowed while the book still has copies.")
     @DeleteMapping ("/{id}")
     @ResponseStatus (HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){

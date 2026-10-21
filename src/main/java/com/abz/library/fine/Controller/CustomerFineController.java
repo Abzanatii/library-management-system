@@ -1,5 +1,6 @@
 package com.abz.library.fine.Controller;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,8 +18,11 @@ import com.abz.library.fine.entity.FineStatus;
 import com.abz.library.fine.service.FineService;
 import com.abz.library.security.AuthenticatedUser;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag (name = "Fines (customer)", description = "Fines payment by CUSTOMER only")
 @RestController 
 @RequiredArgsConstructor 
 @RequestMapping (path = "/api/customer/fines")
@@ -26,6 +30,7 @@ public class CustomerFineController {
 
     private final FineService fineService;
 
+    @Operation (summary = "Customer pays a fine", description = "Change UNPAID to PAID, there is no payment gateway.")
     @PostMapping ("/{id}/pay")
     @ResponseStatus (HttpStatus.CREATED)
     public FineResponse payment(
@@ -34,14 +39,16 @@ public class CustomerFineController {
             return fineService.payment(id, user.id());
     }
 
+    @Operation (summary = "List all logged in user fines", description = "Sort fields: {status, amound, createdAt, paidAt}.")
     @GetMapping 
     public PageResponse<FineResponse> findAllById(
         @AuthenticationPrincipal AuthenticatedUser user,
         @RequestParam (required = false) FineStatus status,
-        Pageable pageable){
+        @ParameterObject Pageable pageable){
             return fineService.findAllbyId(user.id(), status, pageable);
     }
 
+    @Operation (summary = "List one fine owned by the user", description = "The fine must belong to the logged in user.")
     @GetMapping ("/{id}")
     public FineResponse findByIdAndCustomerId(
         @AuthenticationPrincipal AuthenticatedUser user,

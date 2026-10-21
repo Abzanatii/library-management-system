@@ -2,6 +2,7 @@ package com.abz.library.collection.dto;
 
 import com.abz.library.collection.entity.CopyStatus;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -13,6 +14,7 @@ public record BookCopyUpdateRequest(
     @Pattern (regexp = "^[A-Za-z0-9-]+$", message = "Copy number only allows letters, digits and hyphens")
     String copyNumber,
 
+    @Schema (description = "New status", example = "MAINTENANCE")
     @NotNull 
     CopyStatus status
 ) {
