@@ -1,0 +1,2267 @@
+{
+  "info": {
+    "_postman_id": "e2919470-10a3-412b-bec9-0d09f340b5af",
+    "name": "Library API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58862755",
+    "_collection_link": "https://go.postman.co/collection/58862755-e2919470-10a3-412b-bec9-0d09f340b5af?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "item": [
+            {
+              "name": "Negative cases",
+              "item": [
+                {
+                  "name": "Fail - email missing",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"email\": \"\",\r\n    \"password\": \"Passwordtest\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/login",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - email invalid",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"email\": \"test03\",\r\n    \"password\": \"Passwordtest\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/login",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - password missing",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"email\": \"test03@gmail.com\",\r\n    \"password\": \"\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/login",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - password short",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"email\": \"test03@gmail.com\",\r\n    \"password\": \"Pass\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/login",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - invalid credentials",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"email\": \"test03@gmail.com\",\r\n    \"password\": \"Passdddd\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/login",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Login as admin",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = pm.response.json();\r\npm.environment.set(\"admin_token\", jsonData.token);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"Admin@library.test\",\r\n    \"password\": \"Admintest\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseURL}}/api/auth/login",
+                  "host": [
+                    "{{baseURL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login as Librarian",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = pm.response.json();\r\npm.environment.set(\"librarian_token\", jsonData.token);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"Librarian@library.test\",\r\n    \"password\": \"Librariantest\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseURL}}/api/auth/login",
+                  "host": [
+                    "{{baseURL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Login as Customer",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Successful user login\",\r\nfunction(){pm.response.to.have.status(200)});\r\n\r\nvar jsonData = pm.response.json();\r\npm.environment.set(\"token\", jsonData.token);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"ibrahim@gmail.com\",\r\n    \"password\": \"Passwordtest\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseURL}}/api/auth/login",
+                  "host": [
+                    "{{baseURL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Register",
+          "item": [
+            {
+              "name": "Negative cases",
+              "item": [
+                {
+                  "name": "Fail - email conflict",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - missing first-name",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - first-name too long",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03ddddddddddddddddddddddddddddddddddd\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - missing last-name",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - last-name too long",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - missing email",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - invalid email",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - invalid phone",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"012345678911\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - missing password",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - password too short",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"Pass\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - password too long",
+                  "event": [
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.variables.set(\"longPassword\", \"a\".repeat(73));"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test083@gmail.com\",\r\n  \"password\": \"{{longPassword}}\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - missing dob",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Fail - future dob",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"firstName\": \"test03\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"test03@gmail.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2027-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseURL}}/api/auth/register",
+                      "host": [
+                        "{{baseURL}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Register as customer",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Successful user registeration\",\r\nfunction(){pm.response.to.have.status(201)});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"firstName\": \"ibrahim\",\r\n  \"lastName\": \"az003\",\r\n  \"email\": \"ibrahim1@gmail.com\",\r\n  \"password\": \"Passwordtest\",\r\n  \"dateOfBirth\": \"2020-10-02\",\r\n  \"phone\": \"01234567891\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseURL}}/api/auth/register",
+                  "host": [
+                    "{{baseURL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Department",
+      "item": [
+        {
+          "name": "Negative cases",
+          "item": [
+            {
+              "name": "Fail - wrong role",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseURL}}/api/admin/departments",
+                  "host": [
+                    "{{baseURL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "departments"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "auth": {
+            "type": "bearer",
+            "bearer": [
+              {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Add department",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"IT\",\r\n    \"description\": \"IT\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/departments",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "departments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update department",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"IT\",\r\n    \"description\": \"updated\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/departments/9",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "departments",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete department",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/departments/10",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "departments",
+                "10"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/departments",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "departments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/departments/1",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "departments",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Author",
+      "item": [
+        {
+          "name": "Add author",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Arthur C. Pendelton\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/authors",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "authors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update author",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"author-update3\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/authors/9",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "authors",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete author",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/authors/9",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "authors",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/authors",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "authors"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/authors/2",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "authors",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Category",
+      "item": [
+        {
+          "name": "Add category",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Category-test2\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/categories",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update category",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Category-test2\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/categories/9",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/categories/9",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories",
+                "9"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/categories",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/categories/8",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories",
+                "8"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Book",
+      "item": [
+        {
+          "name": "Add book",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"isbn\": 1232564646233,\r\n    \"title\": \"zcleia3z\",\r\n    \"description\": \"data\",\r\n    \"publisher\": \"mhm\",\r\n    \"publicationYear\": 1920,\r\n    \"language\": \"ru\",\r\n    \"departmentId\": 4,\r\n    \"authorIds\": [2],\r\n    \"categoryIds\": [1]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/books",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "books"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update book",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"isbn\": \"1234567890230\",\r\n    \"title\": \"Book-update2\",\r\n    \"description\": \"update\",\r\n    \"publisher\": \"update\",\r\n    \"publicationYear\": 1921,\r\n    \"language\": \"Englishs\",\r\n    \"departmentId\": 1,\r\n    \"authorIds\": [3],\r\n    \"categoryIds\": []\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/books/5",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "books",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete book",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/books/5",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "books",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/books/6",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "books",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/books",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "books"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/books?page=0&size=5&sort=title,desc",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "books"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                },
+                {
+                  "key": "sort",
+                  "value": "title,desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search by title",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/books?title=Architects",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "books"
+              ],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "Architects"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/books?available=false",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "books"
+              ],
+              "query": [
+                {
+                  "key": "available",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sort",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/books?sort=publicationYear,desc",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "books"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "publicationYear,desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Book-Copy",
+      "item": [
+        {
+          "name": "Add book-copy",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"bookId\": 1,\r\n    \"copyNumber\": \"a-312363\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/book-copies",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "book-copies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update book-copy",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"copyNumber\": \"A-112\",\r\n    \"status\": \"AVAILABLE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/admin/book-copies/1",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "book-copies",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch by customerId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/book-copies",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "book-copies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch by bookId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/book-copies?bookId=5",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "book-copies"
+              ],
+              "query": [
+                {
+                  "key": "bookId",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Customer",
+      "item": [
+        {
+          "name": "Fetch all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/customers",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "customers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/customers?status=SUSPENDED",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "SUSPENDED"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search by email, name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/customers?search=test083",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "test083"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sort",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/customers?sort=email,desc",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "email,desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Suspend",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/customers/3/suspend",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "customers",
+                "3",
+                "suspend"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Active",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/customers/3/activate",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "customers",
+                "3",
+                "activate"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Borrow",
+      "item": [
+        {
+          "name": "Customer borrow",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"bookId\": 7\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/customer/borrow",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "borrow"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Librarian borrow",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarian_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"customerId\":6,\r\n    \"bookId\": 3\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/librarian/borrow",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "librarian",
+                "borrow"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Customer return",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/borrowings/4/return",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "borrowings",
+                "4",
+                "return"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Librarian return",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarian_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/librarian/borrowing/3/return",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "librarian",
+                "borrowing",
+                "3",
+                "return"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Librarian return damaged",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarian_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/librarian/borrowing/30/return?damaged=true",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "librarian",
+                "borrowing",
+                "30",
+                "return"
+              ],
+              "query": [
+                {
+                  "key": "damaged",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Librarian lost",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{librarian_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/librarian/borrowing/30/lost",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "librarian",
+                "borrowing",
+                "30",
+                "lost"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/borrowings",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "borrowings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/borrowings/3",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "borrowings",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/borrowings?status=LOST",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "borrowings"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "LOST"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sort",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/customer/borrowings",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "borrowings"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "borrowedAt",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "fineAmount",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Fine",
+      "item": [
+        {
+          "name": "Pay fine",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/fines/1/pay",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "fines",
+                "1",
+                "pay"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/fines",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "fines"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/fines/3",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "fines",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/fines?status=PAID",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "fines"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PAID"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sort",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/fines?sort=amount,desc",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "fines"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "amount,desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reserve",
+      "item": [
+        {
+          "name": "Reserve",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/books/5/reserve",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "books",
+                "5",
+                "reserve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/reservations/1/cancel",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "reservations",
+                "1",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/reservations",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "reservations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/reservations/4",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "reservations",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter by status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/reservations?status=WAITING",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "reservations"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "WAITING"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sort",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/customer/reservations?sort=expiresAt",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "reservations"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "expiresAt"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Report",
+      "item": [
+        {
+          "name": "Overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/reports/overview",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "reports",
+                "overview"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Most borrowed",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/admin/reports/most-borrowed-books",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "reports",
+                "most-borrowed-books"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
+}
