@@ -51,17 +51,17 @@ com.abz.library
 
 ## Technologies Used
 
-| Area | Choice |
-|---|---|
-| Language / build | Java 21, Maven |
-| Framework | Spring Boot, Spring Web |
-| Persistence | Spring Data JPA, Hibernate, PostgreSQL |
-| Schema management | Flyway |
-| Security | Spring Security, JWT (JJWT, HS256), BCrypt |
-| Validation | Bean Validation |
-| Testing | JUnit 5, Mockito, AssertJ |
-| API docs | springdoc OpenAPI (Swagger UI) |
-| Other | Lombok | MapStruct |
+| Area              | Choice                                     |
+| ----------------- | ------------------------------------------ | --------- |
+| Language / build  | Java 21, Maven                             |
+| Framework         | Spring Boot, Spring Web                    |
+| Persistence       | Spring Data JPA, Hibernate, PostgreSQL     |
+| Schema management | Flyway                                     |
+| Security          | Spring Security, JWT (JJWT, HS256), BCrypt |
+| Validation        | Bean Validation                            |
+| Testing           | JUnit 5, Mockito, AssertJ                  |
+| API docs          | springdoc OpenAPI (Swagger UI)             |
+| Other             | Lombok                                     | MapStruct |
 
 ## How to Run the Project
 
@@ -104,47 +104,49 @@ On the first start, Flyway creates the schema and the application creates the de
 
 **4. Log in with a seeded account** (development profile only)
 
-| Role | Email | Password |
-|---|---|---|
-| ADMIN | `admin@library.local` | `Admin@12345` |
-| LIBRARIAN | `librarian@library.local` | `Librarian@12345` |
+| Role      | Email                    | Password        |
+| --------- | ------------------------ | --------------- |
+| ADMIN     | `admin@library.test`     | `Admintest`     |
+| LIBRARIAN | `librarian@library.test` | `Librariantest` |
 
 These credentials are for local development only. Customers register themselves with `POST /api/auth/register`.
 
 ## Database Configuration
 
-| Property | Value |
-|---|---|
-| `spring.datasource.url` | `jdbc:postgresql://localhost:5432/library_db` |
-| `spring.datasource.username` | `${DB_USERNAME:postgres}` |
-| `spring.datasource.password` | `${DB_PASSWORD}` |
-| `spring.jpa.hibernate.ddl-auto` | `validate` |
+| Property                        | Value                                         |
+| ------------------------------- | --------------------------------------------- |
+| `spring.datasource.url`         | `jdbc:postgresql://localhost:5432/library_db` |
+| `spring.datasource.username`    | `${DB_USERNAME:postgres}`                     |
+| `spring.datasource.password`    | `${DB_PASSWORD}`                              |
+| `spring.jpa.hibernate.ddl-auto` | `validate`                                    |
 
 The schema is managed by Flyway (`src/main/resources/db/migration`). Hibernate only validates that the entities match the schema. Never edit an applied migration: add a new one instead.
 
-The database also enforces key rules as a safety net: unique emails and ISBNs, one open borrowing per copy, one open reservation per customer and book, and valid status values.
+The database also enforces some rules as a safety net: unique emails, ISBNs and names (authors, departments, categories), one fine per borrowing, and valid status values. "One open borrowing per copy" and "one open reservation per customer and book" are enforced in the service layer only.
 
 **Application properties**
 
-| Property | Default | Meaning |
-|---|---|---|
-| `app.jwt.expiration-minutes` | `60` | Token lifetime |
-| `app.borrowing.period-days` | `14` | Days until the due date |
-| `app.borrowing.max-active` | `5` | Active borrowings per customer |
-| `app.borrowing.fine-per-day` | `10` | Fine in EGP per overdue day |
-| `app.borrowing.fine-block-threshold` | `500` | Unpaid fines (EGP) above which borrowing is blocked |
-| `app.reservation.hold-hours` | `48` | Hours a READY reservation is held |
+| Property                                | Default                        | Meaning                                             |
+| --------------------------------------- | ------------------------------ | --------------------------------------------------- |
+| `jwt.expiration-minutes`                | `60`                           | Token lifetime                                      |
+| `borrowing.period-days`                 | `14`                           | Days until the due date                             |
+| `borrowing.max-borrow`                  | `5`                            | Active borrowings per customer                      |
+| `borrowing.per-day-fine`                | `10`                           | Fine in EGP per overdue day                         |
+| `borrowing.max-fines`                   | `500`                          | Unpaid fines (EGP) above which borrowing is blocked |
+| `reservation.expiry-hours`              | `48`                           | Hours a READY reservation is held                   |
+| `borrowing.overdue.cron` / `.timezone`  | `0 5 0 * * *` / `Africa/Cairo` | Nightly job that marks late borrowings OVERDUE      |
+| `reservation.expiry.cron` / `.timezone` | `0 0 0 * * *` / `Africa/Cairo` | Nightly job that releases expired holds             |
 
 ## Environment Variables
 
-| Variable | Required | Meaning |
-|---|---|---|
-| `DB_PASSWORD` | Yes | PostgreSQL password |
-| `DB_USERNAME` | No (default `postgres`) | PostgreSQL user |
-| `JWT_SECRET` | Yes | Base64 signing key of at least 32 random bytes. The application refuses to start if it is missing, invalid or too short. |
-| `SPRING_PROFILES_ACTIVE` | No (default `dev`) | Active Spring profile |
+| Variable                 | Required                | Meaning                                                                                                                  |
+| ------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `DB_PASSWORD`            | Yes                     | PostgreSQL password                                                                                                      |
+| `DB_USERNAME`            | No (default `postgres`) | PostgreSQL user                                                                                                          |
+| `JWT_SECRET`             | Yes                     | Base64 signing key of at least 32 random bytes. The application refuses to start if it is missing, invalid or too short. |
+| `SPRING_PROFILES_ACTIVE` | No (default `dev`)      | Active Spring profile                                                                                                    |
 
-Never commit these values. Keep a local `.env` file out of Git.
+Never commit these values. Set them in your shell or your IDE run configuration (Spring Boot does not read a `.env` file by itself).
 
 ## How to Run the Tests
 
@@ -155,11 +157,9 @@ mvn test -Dtest=BorrowingServiceTest      # borrowing tests only
 
 The tests are unit tests: repositories and other services are mocked with Mockito, no database is used, and a fixed `Clock` makes due dates and fines exact.
 
-| Test class | Covers |
-|---|---|
-| `BorrowingServiceTest` | Successful borrow, five active borrowings, unpaid fines above 500, suspended customer, no copy available, same book already borrowed, successful return, overdue return with fine calculation, plus boundary cases, ownership, damaged and lost returns |
-| `ReservationServiceTest` | Reserving, queue hand-off with the 48-hour hold, expiry, completion, cancelling |
-| `ReportServiceTest` | Overview assembly, overdue cutoff, most-borrowed limits |
+| Test class             | Covers                                                                                                                                                                                          |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BorrowingServiceTest` | Successful borrow, five active borrowings, unpaid fines above 500, suspended customer, no copy available, same book already borrowed, return without fine, overdue return with fine calculation |
 
 ## Swagger URL
 
@@ -178,31 +178,31 @@ A Postman collection covering every endpoint is in `postman/Library-API.postman_
 2. **Log in** with `POST /api/auth/login` to receive a signed JWT (`accessToken`, valid for 60 minutes by default).
 3. **Send the token** on every other request: `Authorization: Bearer <accessToken>`.
 
-| URL pattern | Who can call it |
-|---|---|
-| `/api/auth/**` | Everyone |
-| `/api/admin/**` | ADMIN |
-| `/api/librarian/**` | ADMIN and LIBRARIAN |
-| `/api/customer/**` | CUSTOMER only |
-| `GET /api/books`, `GET /api/books/{id}` | Any logged-in user |
+| URL pattern                             | Who can call it            |
+| --------------------------------------- | -------------------------- |
+| `/api/auth/**`                          | Everyone                   |
+| `/api/admin/**`                         | ADMIN                      |
+| `/api/librarian/**`                     | ADMIN and LIBRARIAN        |
+| `/api/customer/**`                      | CUSTOMER only              |
+| `GET /api/books`, `GET /api/books/{id}` | Everyone (no token needed) |
 
 A missing, invalid or expired token returns **401**. A valid token with a role that is not allowed returns **403**. Passwords are hashed with BCrypt.
 
 ## Main Business Rules
 
-| Area | Rule |
-|---|---|
-| Borrowing limit | At most **5** active borrowings (ACTIVE or OVERDUE) per customer |
-| Same book | A customer cannot borrow a book they already have an active borrowing for |
-| Fines block | Unpaid fines **strictly above 500 EGP** block borrowing (exactly 500 is allowed) |
-| Customer status | Suspended or blocked customers cannot borrow or reserve |
-| Availability | A book can be borrowed only if it has an AVAILABLE physical copy |
-| Loan period | Due date is the borrowing date plus **14 days** |
-| Fine | **10 EGP per overdue day**, in calendar days. A book returned on the due date is not late. One fine per borrowing, created only for a late return |
-| Fine payment | UNPAID becomes PAID. A paid fine cannot be paid again, and customers can pay only their own fines |
-| Reservations | When every copy is unavailable, customers join a queue. The first in line gets the next free copy and has **48 hours** to borrow it, otherwise it goes to the next customer |
-| Transactions | Borrowing, returning and every copy hand-off run in a single transaction |
-| Concurrency | Copies use optimistic locking (`@Version`): the second of two simultaneous requests gets a 409 |
+| Area            | Rule                                                                                                                                                                                                            |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Borrowing limit | At most **5** active borrowings (ACTIVE or OVERDUE) per customer                                                                                                                                                |
+| Same book       | A customer cannot borrow a book they already have an active borrowing for                                                                                                                                       |
+| Fines block     | Unpaid fines **strictly above 500 EGP** block borrowing (exactly 500 is allowed)                                                                                                                                |
+| Customer status | Suspended or blocked customers cannot borrow or reserve                                                                                                                                                         |
+| Availability    | A book can be borrowed only if it has an AVAILABLE physical copy                                                                                                                                                |
+| Loan period     | Due date is the borrowing date plus **14 days**                                                                                                                                                                 |
+| Fine            | **10 EGP per overdue day**, counted in whole 24-hour periods after the due time. A book returned within 24 hours of the due time is not late. One fine per borrowing, created only when a late book is returned |
+| Fine payment    | UNPAID becomes PAID. A paid fine cannot be paid again, and customers can pay only their own fines                                                                                                               |
+| Reservations    | When every copy is unavailable, customers join a queue. The first in line gets the next free copy and has **48 hours** to borrow it, otherwise it goes to the next customer                                     |
+| Transactions    | Borrowing, returning and every copy hand-off run in a single transaction                                                                                                                                        |
+| Concurrency     | Copies use optimistic locking (`@Version`): the second of two simultaneous requests gets a 409                                                                                                                  |
 
 ## Example API Requests
 
@@ -221,8 +221,13 @@ curl -X POST http://localhost:8080/api/auth/login \
 ```
 
 ```json
-{ "accessToken": "eyJhbGciOiJIUzI1NiJ9...", "tokenType": "Bearer", "expiresInSeconds": 3600,
-  "email": "ali@example.com", "role": "CUSTOMER" }
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+  "tokenType": "Bearer",
+  "expiresInSeconds": 3600,
+  "email": "ali@example.com",
+  "role": "CUSTOMER"
+}
 ```
 
 **Set up the collection (admin)**
@@ -261,11 +266,27 @@ curl -X POST http://localhost:8080/api/customer/borrow -H "Authorization: Bearer
 ```
 
 ```json
-{ "id": 1,
-  "customer": { "id": 3, "firstName": "Ali", "lastName": "Hassan", "email": "ali@example.com" },
-  "bookCopy": { "id": 1, "copyNumber": "001", "bookId": 1, "bookTitle": "Clean Code", "isbn": "9780132350884" },
-  "borrowedAt": "2026-10-13T09:00:00", "dueDate": "2026-10-27T09:00:00", "returnedAt": null,
-  "status": "ACTIVE", "fineAmount": 0 }
+{
+  "id": 1,
+  "customer": {
+    "id": 3,
+    "firstName": "Ali",
+    "lastName": "Hassan",
+    "email": "ali@example.com"
+  },
+  "bookCopy": {
+    "id": 1,
+    "copyNumber": "001",
+    "bookId": 1,
+    "bookTitle": "Clean Code",
+    "isbn": "9780132350884"
+  },
+  "borrowedAt": "2026-10-13T09:00:00",
+  "dueDate": "2026-10-27T09:00:00",
+  "returnedAt": null,
+  "status": "ACTIVE",
+  "fineAmount": 0
+}
 ```
 
 ```bash
@@ -288,8 +309,15 @@ curl -X POST http://localhost:8080/api/customer/books/1/reserve -H "Authorizatio
 ```
 
 ```json
-{ "id": 1, "bookId": 1, "bookTitle": "Clean Code", "reservedAt": "2026-10-13T09:05:00",
-  "status": "WAITING", "queuePosition": 1, "expiresAt": null }
+{
+  "id": 1,
+  "bookId": 1,
+  "bookTitle": "Clean Code",
+  "reservedAt": "2026-10-13T09:05:00",
+  "status": "WAITING",
+  "queuePosition": 1,
+  "expiresAt": null
+}
 ```
 
 When a copy is returned, the first reservation becomes `READY` with `expiresAt` 48 hours ahead.
@@ -307,47 +335,56 @@ curl "http://localhost:8080/api/admin/reports/most-borrowed-books?limit=5" -H "A
 Every error has the same shape:
 
 ```json
-{ "timestamp": "2026-10-13T09:00:00", "status": 400,
+{
+  "timestamp": "2026-10-13T09:00:00",
+  "status": 400,
   "message": "Customer already has the maximum number of active borrowings",
-  "path": "/api/customer/borrow" }
+  "path": "/api/customer/borrow"
+}
 ```
 
-| Status | Meaning |
-|---|---|
-| 400 | Validation error, malformed request, or business rule violation |
-| 401 | Missing, invalid or expired token, or wrong credentials |
-| 403 | Role not allowed, or the record belongs to another customer |
-| 404 | Record does not exist |
-| 409 | Duplicate value, record still referenced, or concurrent update conflict |
-| 500 | Unexpected error (details only in the server log) |
+| Status | Meaning                                                                 |
+| ------ | ----------------------------------------------------------------------- |
+| 400    | Validation error, malformed request, or business rule violation         |
+| 401    | Missing, invalid or expired token, or wrong credentials                 |
+| 403    | Role not allowed, or the record belongs to another customer             |
+| 404    | Record does not exist                                                   |
+| 409    | Duplicate value, record still referenced, or concurrent update conflict |
+| 500    | Unexpected error (details only in the server log)                       |
 
 ## Assumptions
 
 The project requirements leaves several points open. These are the decisions made.
 
 **Users and roles**
+
 - Staff and customers share one `users` table. Staff accounts come from the development seeding or directly from the database.
 - Suspended and blocked users can log in and browse. The restriction applies when they borrow or reserve.
 - `/api/customer/**` is CUSTOMER only, so librarian endpoints were added: borrow for a customer, return any borrowing, and mark a borrowing lost.
 - Suspending a customer does not cancel their existing borrowings or reservations.
 
 **Collection**
+
 - A book is a title. A copy is a physical item with its own status and a copy number unique within the book.
 - ISBNs are stored without hyphens, and only the format is checked.
 - A department, author or category linked to a book cannot be deleted, and neither can a book that still has copies.
 - Copy status changes follow a strict state machine (for example LOST is terminal). BORROWED and RESERVED are set only by the borrowing and reservation workflows.
 
 **Borrowing and fines**
+
 - ACTIVE and OVERDUE both count as active borrowings.
 - The copy given is the AVAILABLE one with the lowest copy number, or the held copy for a customer with a READY reservation.
-- Lateness is counted in whole calendar days, ignoring the time of day.
+- Lateness is counted in whole 24-hour periods after the due time (borrow time plus 14 days).
 - A librarian can return a copy as damaged (`?damaged=true`) and mark a borrowing lost. A lost book creates no replacement-cost fine.
 - Fines are paid in full. There is no payment gateway, so the status change is the payment.
+- A fine is created only when a late book is returned, so a book that is never returned aquires no fine.
 
 **Reservations**
+
 - Only ACTIVE customers can reserve, and only when no copy is AVAILABLE. A book with no copies can be reserved.
 - Whenever a copy becomes available, it is handed to the first waiting customer inside the same transaction.
-- Expiry is checked on access (before borrow, reserve, cancel and list), so no scheduled job is needed.
+- Expiry is checked on access (before borrow, reserve, cancel and list), and a nightly job at 00:00 (Africa/Cairo) also releases expired holds.
 
 **Reports**
-- `overdueBorrowings` is computed from due dates, so it is accurate without a job that sets the OVERDUE status.
+
+- `overdueBorrowings` counts borrowings with status OVERDUE. A nightly job at 00:05 (Africa/Cairo) marks late ACTIVE borrowings as OVERDUE, and the overview report runs the same check before counting.

@@ -164,7 +164,7 @@ public class BorrowingService {
         return borrowingMapper.toResponse(borrow);
     }
 
-    @Scheduled (cron = "${borrowing.overdue.cron:0 5 0 * * *}", zone = "${borrowing.overdue.zone:Africa/Cairo}")
+    @Scheduled (cron = "${borrowing.overdue.cron:0 5 0 * * *}", zone = "${borrowing.overdue.timezone:Africa/Cairo}")
     @Transactional 
     public void isOverdue(){
         LocalDateTime now = LocalDateTime.now(clock);
@@ -175,11 +175,7 @@ public class BorrowingService {
         }
 
         for(Borrowing borrowing : overdue){
-            long overdueDays = ChronoUnit.DAYS.between(borrowing.getDueDate(), now);
-            BigDecimal fine = BigDecimal.valueOf(overdueDays).multiply(borrowingProperties.perDayFine())
-                                .setScale(2, RoundingMode.HALF_UP);
-            fineService.create(borrowing, fine, now);
-            borrowing.setFineAmount(fine);
+            borrowing.setStatus(BorrowingStatus.OVERDUE);
         }
     }
 

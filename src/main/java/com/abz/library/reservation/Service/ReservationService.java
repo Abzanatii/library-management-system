@@ -111,7 +111,7 @@ public class ReservationService {
         return reservationMapper.toDetailedResponse(reservationRepository.save(reservation));
     }
 
-    @Transactional (readOnly = true)
+    @Transactional 
     private void adjustQueue(Long bookId){
         List<Reservation> waiting = reservationRepository
                                         .findByBookIdAndStatusOrderByQueuePositionAsc(bookId, ReservationStatus.WAITING);
