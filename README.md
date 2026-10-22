@@ -139,12 +139,12 @@ The database also enforces some rules as a safety net: unique emails, ISBNs and 
 
 ## Environment Variables
 
-| Variable                 | Required                | Meaning                                                                                                                  |
-| ------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `DB_PASSWORD`            | Yes                     | PostgreSQL password                                                                                                      |
-| `DB_USERNAME`            | No (default `postgres`) | PostgreSQL user                                                                                                          |
-| `JWT_SECRET`             | Yes                     | Base64 signing key of at least 32 random bytes. The application refuses to start if it is missing, invalid or too short. |
-| `SPRING_PROFILES_ACTIVE` | No (default `dev`)      | Active Spring profile                                                                                                    |
+| Variable                 | Required                    | Meaning                                         |
+| ------------------------ | --------------------------- | ----------------------------------------------- |
+| `DB_PASSWORD`            | No (default `postgres`)     | PostgreSQL password                             |
+| `DB_USERNAME`            | No (default `postgres`)     | PostgreSQL user                                 |
+| `JWT_SECRET`             | NO (default `fallback-key`) | Base64 signing key of at least 32 random bytes. |
+| `SPRING_PROFILES_ACTIVE` | No (default `dev`)          | Active Spring profile                           |
 
 Never commit these values. Set them in your shell or your IDE run configuration (Spring Boot does not read a `.env` file by itself).
 
